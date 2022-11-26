@@ -4,55 +4,32 @@ from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 
-class Genre(Base):
+class Category(Base):
     """
-    There will be a book's genre table
+    There will be a book's category table
     """
 
-    __tablename__ = 'genre'
+    __tablename__ = 'category'
     id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
     title = sq.Column(sq.String, nullable=False)
 
-class Author(Base):
+class M_Mus_Company(Base):
     """
-    There wiil be a book's author table
+    There wiil be a book's main music company table
     """
-    __tablename__ = 'author'
+    __tablename__ = 'm_mus_company'
     id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
     name = sq.Column(sq.String, nullable=False)
-    surname = sq.Column(sq.String, nullable=False)
-    nickname = sq.Column(sq.String, nullable=False)
+    country = sq.Column(sq.Integer, sq.ForeignKey('country.id'), nullable=False)
 
-class AuthorBook(Base):
+class MusCompany_Category(Base):
     """
-
+    THere will be a relationship category
     """
-    __tablename__ = 'author_book'
+    __tablename__ = 'mus_company_category'
     id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
-    id_book = sq.Column(sq.Integer, sq.ForeignKey('book.id'), nullable=False)
-    id_author = relationship(Author, backref='author_book')
-
-class Book(Base):
-    """
-    There will be a book table
-    """
-    __tablename__ = 'book'
-    id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
-    title = sq.Column(sq.String, nullable=False)
-    date = sq.Column(sq.Integer, nullable=True)
-    rating = sq.Column(sq.String, nullable=True)
-    pages = sq.Column(sq.Integer, sq.ForeignKey('country.id'),  nullable=True)
-    publisher = sq.Column(sq.Integer, sq.ForeignKey('publisher.id'), nullable=True)
-
-class Publisher(Base):
-    """
-    There will be a publisher class
-    """
-
-    __tablename__ = 'publisher'
-    id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
-    title = sq.Column(sq.String, nullable=False)
-    country = sq.Column(sq.Integer, nullable=True)
+    id_category = sq.Column(sq.Integer, sq.ForeignKey('category.id'), nullable=False)
+    id_mus_company = relationship(M_Mus_Company, backref='mus_company_category')
 
 class Country(Base):
     """
@@ -61,6 +38,36 @@ class Country(Base):
     __tablename__ = 'country'
     id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
     name = sq.Column(sq.String, nullable=False)
+
+class Country_MusCompany(Base):
+    """
+
+    """
+    __tablename__ = 'country_mus_company'
+    id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
+    id_mus_company = sq.Column(sq.Integer, sq.ForeignKey('m_mus_company.id'), nullable=False)
+    id_country = relationship(Country, backref='country_mus_company')
+
+class Instruments(Base):
+    """
+    There will be a book table
+    """
+    __tablename__ = 'instruments'
+    id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
+    title = sq.Column(sq.String, nullable=False)
+    category = sq.Column(sq.Integer, sq.ForeignKey('category.id'), nullable=False)
+    main_mus_company = sq.Column(sq.Integer, sq.ForeignKey('m_mus_company.id'), nullable=False)
+    f_mus_company = sq.Column(sq.Integer, sq.ForeignKey('f_mus_company.id'), nullable=True)
+
+class F_Mus_Company(Base):
+    """
+    There will be a filial music company class
+    """
+
+    __tablename__ = 'f_mus_company'
+    id = sq.Column(sq.Integer, primary_key=True, unique=True, autoincrement=True)
+    title = sq.Column(sq.String, nullable=False)
+
 
 def create_tables(engine):
     Base.metadata.drop_all(engine)
